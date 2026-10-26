@@ -27,7 +27,7 @@ permissions:
 jobs:
   test-and-build:
     #github provides a fresh ubuntu VM for this job
-    run-on: ubuntu-latest
+    runs-on: ubuntu-latest
     #steps
     steps:
 
@@ -37,7 +37,7 @@ jobs:
 
       #step-2: Install python on runner
       - name: Install python on runner
-        user: actions/setup-python@v5
+        uses: actions/setup-python@v5
         with:
           python-version: "3.14"
       #steps-3 Install the dependencies needed to run the tests
