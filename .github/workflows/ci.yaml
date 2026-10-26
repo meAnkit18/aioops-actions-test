@@ -7,10 +7,10 @@ name: Iris ML API - CI Pipeline
 #Define when Github should run this workflow
 
 on:
-  # Run CI whenever code is pushed to the man branch 
+  # Run CI whenever code is pushed to the main branch 
   push:
     branches:
-      - mean
+      - main
   
   # also validate wproposed changes before they are merged
   pull_request:
@@ -39,7 +39,7 @@ jobs:
       - name: Install python on runner
         uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
+          python-version: "3.12"
       #steps-3 Install the dependencies needed to run the tests
       - name: Install Python Dependencies 
         run: |
@@ -48,7 +48,8 @@ jobs:
 
       #step4 execute the automated tests
       - name: Run automated tests
-        run: python -m pytest -v4
+        run: python -m pytest -v
+
       #step 5 build image ob=nly after tests have passed
       - name: Build Docker Image 
-        run: docker build -t iris-ml-api:${{github.sha}} .
+        run: docker build -t iris-ml-api:${{ github.sha }} .
