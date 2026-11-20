@@ -123,7 +123,13 @@ def main() -> dict:
         candidate.fit(X_train, y_train)
         validation_metrics = metrics(y_test, candidate.predict(X_test))
         mlflow.log_metrics({f"candidate_{k}": v for k, v in validation_metrics.items()})
-        mlflow.sklearn.log_model(candidate, artifact_path="candidate-model")
+        # This candidate is trained in this workflow from the trusted Iris dataset.
+        # skops flags scikit-learn's internal tree storage type; trust only that exact type.
+        mlflow.sklearn.log_model(
+            candidate,
+            name="candidate-model",
+            skops_trusted_types=["sklearn.tree._tree.Tree"],
+        )
         candidate_run_id = run.info.run_id
 
     joblib.dump(candidate, CANDIDATE_PATH)
