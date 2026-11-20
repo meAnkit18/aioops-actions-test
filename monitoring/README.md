@@ -20,10 +20,10 @@ The synthetic incoming batch is deterministic, labelled, and generated from Iris
 - `artifacts/monitoring/candidate_model.joblib`: separately saved retrained candidate.
 - `artifacts/monitoring/quality_gate_decision.json`: explicit, auditable promotion decision.
 
-MLflow runs are stored in the local `mlruns/` directory and can be viewed with:
+MLflow runs are stored in the local SQLite database `mlflow_monitoring.db` and can be viewed with:
 
 ```bash
-mlflow ui --backend-store-uri ./mlruns --host 127.0.0.1 --port 6001
+mlflow ui --backend-store-uri sqlite:///mlflow_monitoring.db --host 127.0.0.1 --port 6001
 ```
 
 ## Quality gate
