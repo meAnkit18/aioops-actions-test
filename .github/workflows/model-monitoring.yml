@@ -41,6 +41,6 @@ jobs:
             artifacts/monitoring/
             data/incoming_iris_batch.csv
             data/iris_training_data.csv
-            mlruns/
+            mlflow_monitoring.db
           if-no-files-found: error
           retention-days: 14

@@ -5,6 +5,7 @@ venv/
 .pytest_cache/
 mlruns/
 mlflow.db
+mlflow_monitoring.db
 artifacts/monitoring/
 data/incoming_iris_batch.csv
 data/iris_training_data.csv
