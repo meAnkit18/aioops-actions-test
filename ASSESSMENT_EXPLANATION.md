@@ -23,4 +23,4 @@ python -m monitoring.run_monitoring
 python -m pytest -v
 ```
 
-Evidence is written to `artifacts/monitoring/`, the candidate model is `artifacts/monitoring/candidate_model.joblib`, and MLflow runs are stored in `mlruns/`. GitHub Actions also runs this workflow on dispatch or relevant pushes and uploads the evidence as a downloadable workflow artifact.
+Evidence is written to `artifacts/monitoring/`, the candidate model is `artifacts/monitoring/candidate_model.joblib`, and MLflow runs are stored in `mlflow_monitoring.db` (SQLite tracking backend). GitHub Actions also runs this workflow on dispatch or relevant pushes and uploads the evidence as a downloadable workflow artifact.
