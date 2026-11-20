@@ -1,0 +1,46 @@
+name: Iris Model Monitoring and Retraining
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, mlops-model-monitoring-retraining]
+    paths:
+      - "monitoring/**"
+      - "tests/test_monitoring.py"
+      - "requirements.txt"
+
+permissions:
+  contents: read
+
+jobs:
+  monitor-and-retrain:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Generate deterministic incoming batch
+        run: python -m monitoring.generate_synthetic_data
+      - name: Run monitoring, evaluation and retraining
+        run: python -m monitoring.run_monitoring
+      - name: Run tests
+        run: python -m pytest -v
+      - name: Upload assessment evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: iris-model-monitoring-evidence
+          path: |
+            artifacts/monitoring/
+            data/incoming_iris_batch.csv
+            data/iris_training_data.csv
+            mlruns/
+          if-no-files-found: error
+          retention-days: 14
