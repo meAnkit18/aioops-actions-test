@@ -86,7 +86,8 @@ def main() -> dict:
         raise FileNotFoundError(f"Existing champion model missing: {CHAMPION_PATH}")
     champion = joblib.load(CHAMPION_PATH)
     X_new, y_new = incoming[FEATURES], incoming[TARGET]
-    champion_metrics = metrics(y_new, champion.predict(X_new))
+    champion_predictions = champion.predict(X_new.to_numpy())
+    champion_metrics = metrics(y_new, champion_predictions)
     report = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "dataset": str(BATCH_PATH.relative_to(ROOT)),
@@ -95,7 +96,7 @@ def main() -> dict:
         "target_distribution": {str(k): int(v) for k, v in incoming[TARGET].value_counts().sort_index().items()},
         "validation": {"required_columns_present": True, "missing_values": 0, "duplicate_record_ids": 0},
         "champion_metrics": champion_metrics,
-        "champion_classification_report": classification_report(y_new, champion.predict(X_new), output_dict=True, zero_division=0),
+        "champion_classification_report": classification_report(y_new, champion_predictions, output_dict=True, zero_division=0),
     }
     REPORT_PATH.write_text(json.dumps(report, indent=2), encoding="utf-8")
 
@@ -107,7 +108,8 @@ def main() -> dict:
         X, y, test_size=0.20, random_state=42, stratify=y
     )
     candidate = RandomForestClassifier(n_estimators=150, random_state=42, class_weight="balanced")
-    mlflow.set_tracking_uri((ROOT / "mlruns").as_uri())
+    # SQLite is the supported MLflow tracking backend; avoid the deprecated file-store backend.
+    mlflow.set_tracking_uri(f"sqlite:///{ROOT / 'mlflow_monitoring.db'}")
     mlflow.set_experiment("iris-model-quality-monitoring")
     with mlflow.start_run(run_name="iris-retraining-candidate") as run:
         mlflow.log_params({
